@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/malloc.h>
-
 //#define LITS_INIT_SIZE 100
 #define MAXSIZE 20
 #define LISTINCREMENT 10
@@ -18,6 +17,9 @@ typedef struct
     ElemType data[MAXSIZE]; //用数组存储数据元素，最大值为MAXSIZE
     int length; //线性表的当前长度
 }seqList;
+void printSequenceList(seqList *L );
+
+
 /*顺序存储结构的三个属性：
 1，存储空间的起始位置：数组data，它的存储位置就是存储空间的存储位置
 2，线性表的最大存储容量：数组长度MAXSIZE
@@ -61,7 +63,7 @@ Status ListInsert(seqList *L, int i , ElemType e)
 
         }
     } 
-   L->data[i]= e;// 将新元素插入
+   L->data[i-1]= e;// 将新元素插入 注意第i个位置的下标是i-1
    L->length++;
    return OK;
 }
@@ -99,10 +101,36 @@ int main()
 {
     printf("hello Sequence List\n");
     seqList L;
-    ElemType e;
-    ListInsert(&L,1,1);
-    GetElem(L,1,&e);
-    printf("%d\n", e); 
+//初始化一个线性表
+    int i;
+    for (i = 0; i < 10;i++)
+    {
+        L.data[i]=i+1;
+    }
+    L.length=i;
+    printSequenceList(&L);
+    ElemType e, q;
+    //调用获取线性表的元素的函数，参数为表，第i个元素，返回元素
+    GetElem(L, 1, &e);
+    printf("所求元素是%d\n", e);
 
+    ListInsert(&L, 1, 0);
+    printSequenceList(&L);
+
+    ListDelete(&L, 1, &q);
+    printf("删除元素是%d\n", q);
+    printSequenceList(&L);
     return 0;
+}
+void printSequenceList(seqList *L )
+{
+    int i;
+    for (i = 0; i < L->length; i++)
+    {
+        printf("%d ",L->data[i]);
+        
+    }
+    printf("\n");
+    printf("Sequence length:%d\n",L->length);
+   
 }

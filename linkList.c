@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/malloc.h>
+#include <time.h>
 #define ERROR 0
 #define FALSE 0
 #define TRUE 1
@@ -86,6 +87,7 @@ Status ListInsert(LinkList *L, int i, ElemType e)
 2，单链表的标准删除语句 p->next = q-next
 3, 将q结点中的数据赋值给e，作为返回
 4，释放q结点，返回成功*/
+/*初始条件：线性表L已经存在*/
 /*操作结果：删除L的第i个数据元素，并用e返回其值，L的长度减1*/
 Status ListDelete(LinkList *L, int i, ElemType *e)
 {
@@ -104,11 +106,121 @@ Status ListDelete(LinkList *L, int i, ElemType *e)
     }
     q = p->next;
     p->next = q->next;
-    *e = p->data;
+    *e = q->data;
     free(q); //让系统回收此结点，释放内存
     return OK;
 
 }
+/*关于线性表的创建，顺序存储结构的创建就是一个数组的初始化，而创建单链表的过程是一个动态生成链表的过程，
+即，从空表的初始状态起，依次建立各元素结点，并逐个插入链表*/
+
+/*思路：
+1， 声明一个结点p和计数器变量j
+2， 初始化一个空链表L
+3， 让L的头结点的指针指向NULL，即建立一个带头结点的单链表
+4， 循环：
+    1）生成一个新结点赋值给p
+    2）随机生成一数字赋值给p的数据域p->data
+    3)将p插入到头结点与前一结点之间
+*/
+/*随机产生n个元素的值，建立带表头结点的单链线性表L
+（头插法） 始终让新结点在第一的位置*/
+void CreateListHead(LinkList *L, int n)
+{
+    LinkList p;
+    int i;
+    srand(time(0)); //初始化随机数种子
+    *L = (LinkList)malloc(sizeof(Node));
+    (*L)->next = NULL; //建立一个带头结点的单链表
+    for(i=0;i<n;i++)
+    {
+        p = (LinkList)malloc(sizeof(Node)); //生成一个新结点
+        p->data = rand()%100+1; //随机生成100以内的数字
+        //插入到表头 插入的标准语句
+        p->next = (*L)->next;
+        (*L)->next = p;
+    }
+}
+/*尾插法---把每次的新结点插在终端结点的后面*/
+void CreateListTail(LinkList *L, int n)
+{
+    LinkList p,r;
+    int i;
+    srand(time(0));
+    (*L) = (LinkList)malloc(sizeof(Node));
+    r = *L; //r为指向尾部的结点
+    for(i=0;i<n;i++)
+    {
+        p = (LinkList)malloc(sizeof(Node));
+        p->data = rand()%100+1;
+        r->next = p; //将表尾终端结点的指针指向新结点
+        r = p;  //将当前的新结点重新赋值给r 让r保持为终端结点
+
+    }
+    //循环结束了，插入的也结束了，最终的表尾结点的最后一个结点的指针域也要置空
+    r->next = NULL; //表示当前链表结束
+}
+//整表删除
+/*思路：
+1， 声明一个结点p和q
+2， 将第一个结点赋值给p
+3， 循环：
+    1）将下一结点赋值给q；
+    2）释放p；
+    3）将q赋值给p
+*/
+Status ClearList(LinkList *L)
+{
+    LinkList p,q;
+    p = (*L)->next; //p指向第一个结点
+    while(p) //没到表尾
+    {
+        q = p->next; 
+        free(p);
+        p = q;
+    }
+    (*L)->next = NULL; //头结点的指针域为空
+    return OK;
+}
+void printLinkList(LinkList L)
+{
+    LinkList p;
+    p = L->next; //p指向第一个结点
+    while(p) //没到表尾
+    {
+        printf("%d ",p->data);        
+        p = p->next;
+    }
+    printf("\n");
+}
+int main()
+{
+    printf("Helllo Link List\n");
+    LinkList L;
+    CreateListTail(&L, 10);
+    printLinkList(L);
+    ElemType e,d;
+    GetElem(L, 1, &e);
+    printf("get the first data is %d\n", e);
+    ListInsert(&L, 1, 20);
+    printLinkList(L);
+    ListDelete(&L, 1, &d);
+    printf("get the delete data is %d\n", d);
+    printLinkList(L);
+    ClearList(&L);
+    
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

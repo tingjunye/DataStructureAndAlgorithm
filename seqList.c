@@ -97,6 +97,24 @@ Status ListDelete(seqList *L, int i, ElemType *e)
    L->length--;
    return OK;
 }
+/*已知一个顺序表，其中的元素递增有序排序，设计一个算法插入元素x后保持该顺序表仍递增有序顺序*/
+void ex_2_11_insert(seqList *L, ElemType x)
+{
+    int j, k; //下标标记
+    for(j=0;j<L->length;j++)
+    {
+        if(L->data[j] > x)
+        {
+            k = j ; //找到下标
+        }
+    }
+    for(j=L->length;j>=k;j--)
+    {
+        L->data[j+1] = L->data[j];
+    }
+    L->data[k] = x;
+    L->length++;
+}
 int main()
 {
     printf("hello Sequence List\n");
